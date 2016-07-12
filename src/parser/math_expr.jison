@@ -25,24 +25,42 @@
 %left 'MULT' 'DIV' 'MOD'
 %left 'POWER'
 
-%start Expression
+%start MathStatement
 
 /* grammar */
 %%
 
-Expression
-    : Expr
+MathStatement
+    : FunctionStatement
         {
             return $1;
         }
-    | FunctionExpr
+    | FunctionCallStatement
         {
             return $1;
         }
     ;
 
-Expr
-    : Expr 'ADD' Expr
+Expression
+    : MathExpr
+        {
+            $$ = $1;
+        }
+    | FunctionCallExpr
+        {
+            $$ = $1;
+        }
+    | 'STRING'
+        {
+            $$ = {
+              "type": "StringExpression",
+              "val": $1
+            };
+        }
+    ;
+
+MathExpr
+    : MathExpr 'ADD' MathExpr
         {
             $$ = {
                 "type": "Addition",
@@ -50,7 +68,7 @@ Expr
                 "right": $3
             };
         }
-    | Expr 'SUB' Expr
+    | MathExpr 'SUB' MathExpr
         {
             $$ = {
                 "type": "Substraction",
@@ -58,7 +76,7 @@ Expr
                 "right": $3
             };
         }
-    | Expr 'MULT' Expr
+    | MathExpr 'MULT' MathExpr
         {
             $$ = {
                 "type": "Multiplication",
@@ -66,7 +84,7 @@ Expr
                 "right": $3
             };
         }
-    | Expr 'DIV' Expr
+    | MathExpr 'DIV' MathExpr
         {
             $$ = {
                 "type": "Division",
@@ -74,7 +92,7 @@ Expr
                 "right": $3
             };
         }
-	| Expr 'MOD' Expr
+	| MathExpr 'MOD' MathExpr
 		{
 			$$ = {
 				"type": "Modulo",
@@ -82,7 +100,7 @@ Expr
 				"divisor": $3
 			};
 		}
-    | Expr 'POWER' Expr
+    | MathExpr 'POWER' MathExpr
         {
             $$ = {
                 "type": "Power",
@@ -90,7 +108,7 @@ Expr
                 "exponent": $3
             };
         }
-    | 'LPAREN' Expr 'RPAREN'
+    | 'LPAREN' MathExpr 'RPAREN'
         {
             $$ = {
                 "type": "Closure",
@@ -127,18 +145,18 @@ Expr
         }
     ;
 
-FunctionExpr
-    : 'LPAREN' FunctionExpr 'RPAREN'
+FunctionStatement
+    : 'LPAREN' FunctionStatement 'RPAREN' 'SEMICOL'
         {
             $$ = {
                 "type": "Closure",
                 "val": $2
             };
         }
-    | 'STRING' 'LPAREN' CommaList 'RPAREN' 'EQUAL' Expr
+    | 'STRING' 'LPAREN' StringCommaList 'RPAREN' 'EQUAL' MathExpr 'SEMICOL'
         {
             $$ = {
-                "type": "Function",
+                "type": "FunctionDefinition",
                 "name": $1,
                 "vars": $3,
                 "val": $6
@@ -146,8 +164,8 @@ FunctionExpr
         }
     ;
 
-CommaList
-	: 'STRING' 'COMMA' CommaList
+StringCommaList
+	: 'STRING' 'COMMA' StringCommaList
 		{
 			$3.val.push($1);
 			$$ = $3;
@@ -160,3 +178,36 @@ CommaList
 			};
 		}
 	;
+
+ExprCommaList
+	: Expression 'COMMA' ExprCommaList
+		{
+			$3.val.push($1);
+			$$ = $3;
+		}
+	| Expression
+		{
+			$$ = {
+				"type": "ExprCommaList",
+				"val": [$1]
+			};
+		}
+	;
+
+FunctionCallStatement
+    : FunctionCallExpr 'SEMICOL'
+        {
+            $$ = $1;
+        }
+    ;
+
+FunctionCallExpr
+    : 'STRING' 'LPAREN' ExprCommaList 'RPAREN'
+        {
+            $$ = {
+                "type": "FunctionCall",
+                "name": $1,
+                "vars": $3
+            };
+        }
+    ;
