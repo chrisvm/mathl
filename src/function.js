@@ -1,5 +1,5 @@
 "use strict"
-var parser = require('./parser').FunctionParser,
+var parser = require('./parser/parser').FunctionParser,
 	_ = require('lodash');
 
 /**

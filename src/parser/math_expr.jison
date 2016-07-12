@@ -6,7 +6,7 @@
 "PI"                  return 'PI';
 "E"                   return 'E';
 [0-9]+("."[0-9]+)?\b  return 'NUMBER';
-[a-zA-Z_]+            return 'STRING';
+[a-zA-Z_][a-zA-Z0-9_]+      return 'STRING';
 "**"                  return 'POWER';
 "*"                   return 'MULT';
 "/"                   return 'DIV';
@@ -17,6 +17,7 @@
 ")"                   return 'RPAREN';
 "="                   return 'EQUAL';
 ","                   return 'COMMA';
+";"                   return 'SEMICOL';
 
 /lex
 

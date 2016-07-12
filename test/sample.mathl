@@ -1,0 +1,4 @@
+func_1(x, y) = (x**2) + (y**2);
+func_2(x, y) = (x**3) + (y**3);
+print(func_2(2, 2));
+print(func_2(3, 3));
