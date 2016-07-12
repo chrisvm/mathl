@@ -1,0 +1,15 @@
+{
+  "name": "mathl",
+  "version": "0.0.2",
+  "description": "simple math equations language",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "chrisvm <christian.velez55@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "jison": "^0.4.17",
+    "lodash": "^4.13.1"
+  }
+}
