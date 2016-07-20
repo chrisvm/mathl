@@ -25,12 +25,26 @@
 %left 'MULT' 'DIV' 'MOD'
 %left 'POWER'
 
-%start MathStatement
+%start MathlFile
 
 /* grammar */
 %%
+MathlFile
+    : MathlStatement MathlFile
+        {
+            $2.statements.push($1);
+            $$ = $2;
+        }
+    | MathlStatement
+        {
+            $$ = {
+                "type": "MathlFile",
+                "statements": [$1]
+            };
+        }
+    ;
 
-MathStatement
+MathlStatement
     : FunctionStatement
         {
             return $1;
@@ -49,13 +63,6 @@ Expression
     | FunctionCallExpr
         {
             $$ = $1;
-        }
-    | 'STRING'
-        {
-            $$ = {
-              "type": "StringExpression",
-              "val": $1
-            };
         }
     ;
 
@@ -163,21 +170,6 @@ FunctionStatement
             };
         }
     ;
-
-StringCommaList
-	: 'STRING' 'COMMA' StringCommaList
-		{
-			$3.val.push($1);
-			$$ = $3;
-		}
-	| 'STRING'
-		{
-			$$ = {
-				"type": "CommaList",
-				"val": [$1]
-			};
-		}
-	;
 
 ExprCommaList
 	: Expression 'COMMA' ExprCommaList

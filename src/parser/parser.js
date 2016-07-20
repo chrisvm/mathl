@@ -5,7 +5,7 @@ var jison = require('jison'),
 
 // object with the list of the
 var parserJisonFiles = {
-    "FunctionParser": 'math_expr.jison'
+    "MathlParser": 'math_expr.jison'
 };
 
 // itereate through the parser to create
